@@ -256,11 +256,13 @@ disp(cond);
                     
                 %     ------ To do -----
                 % ---- send eeg trigggers ----
+                % 14.Aug, 2017
                   
-                t1 = bitset(0,exp.seq(expInfo.curTrial,3) + 4); % mark 5,6 bits for color, orientation
-                lr = floor((exp.seq(expInfo.curTrial,4) - 10)/6); % 0 - left, 1 right
-                t2 = bitset(0, lr + 7);
-                stim.trigger = t1 + t2;
+                t1 = bitset(0,exp.seq(expInfo.curTrial,1)-1 + 4); % mark 5,6 bits for target,  0-absent, 1-present
+                lr = floor(exp.seq(expInfo.curTrial,2) - 1); % response/action mapping, 0-cue right, 1-cue left
+                t2 = bitset(0, lr + 6);   % mark 7,8 bits for response/action mapping, 0-cue right, 1-cue left
+                t3 = bitset (0, exp.seq(expInfo.curTrial,3) - 1 + 8);  % mark 9,10 bits target, 0-orientaion, 1-color
+                stim.trigger = t1 + t2 +t3;
 disp(stim.trigger);                
 
             case expState.Response
