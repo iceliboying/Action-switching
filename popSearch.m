@@ -220,12 +220,21 @@ disp(cond);
                 
                 curState = expState.Fixation; % move to Fixation
                 timeTag = GetSecs;
-                stim.trigger = 1; % fixation trigger
+                stim.trigger = 1; % fixation trigger  ´% modify
                 
             case expState.Fixation
-                 if GetSecs - timeTag > curState.duration
-                     curState = expState.Cue;
-                     timeTag = GetSecs;
+                if GetSecs - timeTag > curState.duration
+                    curState = expState.Cue;
+                    timeTag = GetSecs;
+                    
+                    t1 = bitset(0,exp.seq(expInfo.curTrial,1) + 2); % mark 3,4 bits for target,  0-absent, 1-present
+                    lr = floor(exp.seq(expInfo.curTrial,2)); % response/action mapping, 0-cue right, 1-cue left
+                    t2 = bitset(0, lr + 4);   % mark 5,6 bits for response/action mapping, 0-cue right, 1-cue left
+                    t3 = bitset (0, exp.seq(expInfo.curTrial,3)  + 6);  % mark 7,8 bits target, 0-orientaion, 1-color
+                    t4 = bitset(0, exp.seq(expInfo.curTrial,4)+8); % mark 9,10 bits target, left, right
+                    stim.trigger = t1 + t2 + t3 + t4;
+                    disp(stim.trigger);
+                    
                  end
             case expState.Cue
                 
@@ -240,7 +249,9 @@ disp(cond);
                 
                 curState = expState.Cue_Wait;
                 timeTag = GetSecs;
-                stim.trigger = 2; % cue     % todo: change trigger number
+                lr = floor(exp.seq(expInfo.curTrial,2)); % response/action mapping, 0-cue right, 1-cue left
+                t2 = bitset(0, lr + 4);  
+                stim.trigger = t2; % cue     % todo: change trigger number
                 
             case expState.Cue_Wait
                  if GetSecs - timeTag > curState.duration
@@ -253,17 +264,15 @@ disp(cond);
                 v.dispItems(stim.xy, stim.items, repmat(stim.itemSizes,length(stim.items),1),stim.rotations);
                 curState = expState.Response;
                 timeTag = GetSecs;
-                    
+                t1 = bitset(0,exp.seq(expInfo.curTrial,1) + 2); % mark 3,4 bits for target,  0-absent, 1-present
+                t3 = bitset (0, exp.seq(expInfo.curTrial,3)  + 6);  % mark 7,8 bits target, 0-orientaion, 1-color
+                t4 = bitset(0, exp.seq(expInfo.curTrial,4)+8); % mark 9,10 bits target, left, right
+                stim.trigger = t1 + t3 + t4;
+    
                 %     ------ To do -----
                 % ---- send eeg trigggers ----
                 % 14.Aug, 2017
                   
-                t1 = bitset(0,exp.seq(expInfo.curTrial,1)-1 + 4); % mark 5,6 bits for target,  0-absent, 1-present
-                lr = floor(exp.seq(expInfo.curTrial,2) - 1); % response/action mapping, 0-cue right, 1-cue left
-                t2 = bitset(0, lr + 6);   % mark 7,8 bits for response/action mapping, 0-cue right, 1-cue left
-                t3 = bitset (0, exp.seq(expInfo.curTrial,3) - 1 + 8);  % mark 9,10 bits target, 0-orientaion, 1-color
-                stim.trigger = t1 + t2 +t3;
-disp(stim.trigger);                
 
             case expState.Response
                 
@@ -274,7 +283,7 @@ disp(stim.trigger);
                         rt = GetSecs - timeTag;
                         expInfo.myResp(expInfo.curTrial, 1:2) = [resp, rt];
                         timeTag = GetSecs;
-                        stim.trigger = bitset(0, 2+resp); % bit 3,4      % send trigger to EEG
+                        stim.trigger = bitset(0, resp); % bit 1,2      % send trigger to EEG
 disp(stim.trigger);
                     end
                     
