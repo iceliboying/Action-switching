@@ -1,7 +1,8 @@
 # Action-switching
 
 Triggers:
-Cue right, Target absent:             0,4\\
+Cue right, Target absent:             0,4\
+
 Cue left,  Target present:            8,12
 Cue right, Target right, Color:       16
 Cue left,  Target right, Color:       24
