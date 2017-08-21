@@ -2,7 +2,7 @@
 
 Triggers:
 
-Cue right, Target absent:             0,4
+Cue right, Target absent:    \quad         0,4
 
 Cue left,  Target present:            8,12
 
