@@ -1,6 +1,6 @@
 # Action-switching
 
-Triggers:
+Conditions_Triggers:
 
 Cue right, Target absent:             0,4
 
@@ -21,3 +21,10 @@ Cue left,  Target left,  Color:       26
 Cue right, Target left,  Orientation: 22
 
 Cue right, Target left,  Color:       18
+
+
+Response_Triggers:
+
+left:  0
+
+right: 1
