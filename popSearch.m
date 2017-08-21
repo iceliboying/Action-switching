@@ -231,7 +231,7 @@ disp(stim.c_target_pos);
                 if GetSecs - timeTag > curState.duration
                     curState = expState.Cue;
                     timeTag = GetSecs;
-                    t = exp.seq(expInfo.curTrial,1)*power(2,4) + floor(exp.seq(expInfo.curTrial,2))*power(2,3) + exp.seq(expInfo.curTrial,3)*power(2,2) + exp.seq(expInfo.curTrial,4)*power(2,1) ; 
+                    t = exp.seq(expInfo.curTrial,1)*power(2,4) + floor(exp.seq(expInfo.curTrial,2)-1)*power(2,3) + (exp.seq(expInfo.curTrial,3)-1)*power(2,2) + exp.seq(expInfo.curTrial,4)*power(2,1) ; 
                     % Mark target present or absent on the 5th digit, cue 
                     % left or right on the 4th digit, color or orientation 
                     % on the 3rd digit, target left or right
@@ -253,8 +253,8 @@ disp(stim.trigger);
                 
                 curState = expState.Cue_Wait;
                 timeTag = GetSecs;
-                stim.trigger = exp.seq(expInfo.curTrial,4); % cue     % todo: change trigger number
-                
+                stim.trigger = exp.seq(expInfo.curTrial,2)-1; % cue position: 1-left, 0-right
+ disp('cue');disp(stim.trigger);               
             case expState.Cue_Wait
                  if GetSecs - timeTag > curState.duration
                      curState = expState.Target;
