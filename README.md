@@ -2,7 +2,7 @@
 
 Conditions_Triggers:
 
-Cue right, Target absent:             0,4\n
+Cue right, Target absent:             0,4
 
 Cue left,  Target present:            8,12
 
