@@ -28,3 +28,5 @@ Response_Triggers:
 left:  0
 
 right: 1
+
+But there is a problem: there is a overlap over response left(0) and 'cue right, absent(0)'
