@@ -5,7 +5,7 @@ function popSearch(block)
 datapath= '.';
 
 blk_trials = 50;
-num_block = 30;
+num_block = 6;
 %    block_percent = [75 25 50];
 
 rand('seed',sum(clock*100))
@@ -67,8 +67,8 @@ setup(block);
         turquoise = [64, 224, 208]; % .221, 0.318
         
         stim.tex_dis = v.createShape('rectangle',0.15, 0.8,'color',turquoise);
-        stim.tex_cue = v.createShape('rectangle', 0.2, 0.2, 'color', turquoise);
-        stim.tex_cue2 = v.createShape('rectangle', 0.2, 0.2, 'color', green);
+%         stim.tex_cue = v.createShape('rectangle', 0.2, 0.2, 'color', turquoise);
+%         stim.tex_cue2 = v.createShape('rectangle', 0.2, 0.2, 'color', green);
         stim.tex_tar(1) = v.createShape('rectangle',0.15, 0.8,'color',red);
         stim.tex_tar(2) = v.createShape('rectangle',0.15, 0.8,'color',green);
         stim.isFinished = 0;
@@ -76,7 +76,7 @@ setup(block);
         
         % store local trial information
         stim.c_target = 0;
-        stim.c_action_mapping= 0;
+%         stim.c_action_mapping= 0;
         stim.c_cond = 0; % color/orientation
         stim.c_target_pos = 0; % target position
         stim.c_color = 0; % purple or green;
@@ -188,7 +188,7 @@ setup(block);
                 cond = exp.getCondition; %get condition array
 disp(cond);
                 stim.c_target = cond(1); % target present/absent
-                stim.c_action_mapping = cond(2); % mapping between responses (present/absent) and actions (left mouse button/right mouse button)
+%                 stim.c_action_mapping = cond(2); % mapping between responses (present/absent) and actions (left mouse button/right mouse button)
                 stim.c_cond = cond(3); % color/orientation
                 stim.c_target_pos = 0; % target position
                 stim.c_color = ceil(rand*2); % purple or green;
@@ -229,7 +229,7 @@ disp(stim.c_target_pos);
                 
             case expState.Fixation
                 if GetSecs - timeTag > curState.duration
-                    curState = expState.Cue;
+                    curState = expState.Cue_Wait;
                     timeTag = GetSecs;
                     t = exp.seq(expInfo.curTrial,1)*power(2,4) + floor(exp.seq(expInfo.curTrial,2)-1)*power(2,3) + (exp.seq(expInfo.curTrial,3)-1)*power(2,2) + exp.seq(expInfo.curTrial,4)*power(2,1) ; 
                     % Mark target present or absent on the 5th digit, cue 
@@ -241,20 +241,20 @@ disp(stim.c_target_pos);
 disp(stim.trigger);
                 end
                  
-            case expState.Cue
-                cond = exp.getCondition; % get condition array
-                if cond(2)==1
-                    v.dispItems([2 0], stim.tex_cue, [0.5 0.5], 0);
-                    %  v.dispItems([-2 0; 2 0], [tex_cue tex_cue2], [0.3 0.3; 0.3 0.3], 0);
-                else
-                    v.dispItems([-2 0], stim.tex_cue, [0.5 0.5], 0);
-                    %  v.dispItems([2 0; -2 0], [tex_cue tex_cue2], [0.3 0.3; 0.3 0.3], 0);
-                end
-                
-                curState = expState.Cue_Wait;
-                timeTag = GetSecs;
-                stim.trigger = exp.seq(expInfo.curTrial,2)-1; % cue position: 1-left, 0-right
- disp('cue');disp(stim.trigger);               
+%             case expState.Cue
+%                 cond = exp.getCondition; % get condition array
+%                 if cond(2)==1
+%                     v.dispItems([2 0], stim.tex_cue, [0.5 0.5], 0);
+%                     %  v.dispItems([-2 0; 2 0], [tex_cue tex_cue2], [0.3 0.3; 0.3 0.3], 0);
+%                 else
+%                     v.dispItems([-2 0], stim.tex_cue, [0.5 0.5], 0);
+%                     %  v.dispItems([2 0; -2 0], [tex_cue tex_cue2], [0.3 0.3; 0.3 0.3], 0);
+%                 end
+%                 
+%                 curState = expState.Cue_Wait;
+%                 timeTag = GetSecs;
+%                 stim.trigger = exp.seq(expInfo.curTrial,2)-1; % cue position: 1-left, 0-right
+%  disp('cue');disp(stim.trigger);               
             case expState.Cue_Wait
                  if GetSecs - timeTag > curState.duration
                      curState = expState.Target;
@@ -264,48 +264,48 @@ disp(stim.trigger);
             case expState.Target
             
                 v.dispItems(stim.xy, stim.items, repmat(stim.itemSizes,length(stim.items),1),stim.rotations);
-                curState = expState.Response;
+                curState = expState.End_Trial;
                 timeTag = GetSecs;                  
 
-            case expState.Response
-                
-                    resp = kb.response;
-                    if resp > 0
-                        v.flip;
-                        curState = expState.Feedback;
-                        rt = GetSecs - timeTag;
-                        expInfo.myResp(expInfo.curTrial, 1:2) = [resp, rt];
-                        timeTag = GetSecs;
-                        stim.trigger = resp-1; % left 0, right 1      % send trigger to EEG
-disp(stim.trigger);
-                    end
+%             case expState.Response
+%                 
+%                     resp = kb.response;
+%                     if resp > 0
+%                         v.flip;
+%                         curState = expState.End_Trial;
+%                         rt = GetSecs - timeTag;
+%                         expInfo.myResp(expInfo.curTrial, 1:2) = [resp, rt];
+%                         timeTag = GetSecs;
+%                         stim.trigger = resp-1; % left 0, right 1      % send trigger to EEG
+% disp(stim.trigger);
+%                     end
                     
-            case expState.Feedback
-                resp = expInfo.myResp(expInfo.curTrial, 1);
-                correct=1;
-                if ((stim.c_action_mapping==1 && mod(stim.c_target,2)==mod(resp,2)) || ...
-                        (stim.c_action_mapping==2 && mod(stim.c_target+1,2)==mod(resp,2)) )
-                    % change 'key' into kb.response,in the myversioninJune there is                    
-                    % '[key, rTime] = kb.response;', here there is not.          
-
-                    v.color=[255 0 0];
-                    correct=0;
-                    v.dispText('Incorrect')
-                    v.color=[255 255 255];
-                    curState = expState.Feedback_Wait; % wait 500 ms
-                else % correct
-                    curState = expState.End_Trial;
-                end
-                timeTag = GetSecs;
-                expInfo.myResp(expInfo.curTrial,3) = correct;
-                
-            case expState.Feedback_Wait
-                
-                 if GetSecs - timeTag >= curState.duration
-                     v.flip;
-                     curState = expState.End_Trial;
-                     timeTag = GetSecs;
-                 end
+%             case expState.Feedback
+%                 resp = expInfo.myResp(expInfo.curTrial, 1);
+%                 correct=1;
+%                 if ((stim.c_action_mapping==1 && mod(stim.c_target,2)==mod(resp,2)) || ...
+%                         (stim.c_action_mapping==2 && mod(stim.c_target+1,2)==mod(resp,2)) )
+%                     % change 'key' into kb.response,in the myversioninJune there is                    
+%                     % '[key, rTime] = kb.response;', here there is not.          
+% 
+%                     v.color=[255 0 0];
+%                     correct=0;
+%                     v.dispText('Incorrect')
+%                     v.color=[255 255 255];
+%                     curState = expState.Feedback_Wait; % wait 500 ms
+%                 else % correct
+%                     curState = expState.End_Trial;
+%                 end
+%                 timeTag = GetSecs;
+%                 expInfo.myResp(expInfo.curTrial,3) = correct;
+%                 
+%             case expState.Feedback_Wait
+%                 
+%                  if GetSecs - timeTag >= curState.duration
+%                      v.flip;
+%                      curState = expState.End_Trial;
+%                      timeTag = GetSecs;
+%                  end
                  
             case expState.End_Trial
                  % check if it is end of block or end of experiment or next
@@ -357,9 +357,9 @@ disp(stim.trigger);
         
         function Terminate(block)
             v.close;
-            if ~isdir('exp_data')
-                mkdir('exp_data')
+            if ~isdir('preview_data')
+                mkdir('preview_data')
             end
-            save([datapath filesep 'exp_data' filesep 'sub',num2str(block.InputPort(1).Data(1)),'_',datestr(now,'dd_mm_yyyy_HH_MM_SS')],'exp', 'expInfo');
+            save([datapath filesep 'preview_data' filesep 'sub',num2str(block.InputPort(1).Data(1)),'_',datestr(now,'dd_mm_yyyy_HH_MM_SS')],'exp', 'expInfo');
         end
 end             

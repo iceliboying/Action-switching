@@ -15,7 +15,8 @@ classdef expState
         New_Block_Wait (inf)
         Block_Wait(inf)
         Init_Block (inf)
-        Init_Trial (inf)
+        End_Block (1) 
+        Init_Trial (0.05)
         Fixation (0.3) 
         Cue (0)
         Cue_Wait(0.7)
@@ -24,7 +25,6 @@ classdef expState
         Feedback (0) 
         Feedback_Wait (0.5) 
         End_Trial (1.2)
-        End_Block (1) 
         End_Exp (2)
     end
 end
