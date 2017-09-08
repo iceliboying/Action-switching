@@ -4,8 +4,8 @@ function popSearch_2x(block)
 
 datapath= '.';
 
-blk_trials = 50;
-num_block = 30;
+blk_trials = 65;
+num_block = 18;
 %    block_percent = [75 25 50];
 
 rand('seed',sum(clock*100))
@@ -20,7 +20,7 @@ exp.seq = genTrials(num_block/3,50,3); % color/ori/absent, pos
 full_blk_trials=num_block*blk_trials/3; % Number of trials in a "full" block
     
 for i=1:num_block
-    seq=debruijn_generator(7,2);
+    seq=debruijn_generator(8,2);
     seq(end+1)=seq(1);
     exp.seq((i-1)*blk_trials+1:i*blk_trials,1)=seq<5; % seq %in% 5...8 => target absent
     exp.seq((i-1)*blk_trials+1:i*blk_trials,2)=mod(ceil(seq/2),2)+1; % response/action mapping (1 = cue on right, 2 = cue on left)
@@ -28,6 +28,46 @@ for i=1:num_block
     exp.seq((i-1)*blk_trials+1:i*blk_trials,4)=0; % target postion
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% set labels for blocks, Sep 06, 2017, Bing
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+l=0;
+m=0;
+n=0;
+
+for i=1:num_block
+    a=ceil(rand*3);
+    
+    if a==1
+        l=l+1;
+    else
+        if a==2
+            m=m+1;
+        else
+            n=n+1;
+        end
+    end
+        
+    if l>=6
+        a=1+ceil(rand*2);
+    end
+    if m>=6
+        pos=randi(2);
+        x=[1,3];
+        a=x(pos);
+    end
+    if n>=6
+        a=ceil(2*rand);
+    end
+    
+    for j=1:blk_trials
+        exp.seq(j,5)=a;
+    end
+end
+    
+            
+       
 % exp.subInfo; % acquire subject information
 
 expInfo.NumTrials = size(exp.seq,1);
@@ -171,52 +211,50 @@ setup(block);
                     'Please try to respond as quickly and accurately as possible.\n',...
                     '\n when you are ready, press any key to continue'];
                 v.dispText(infoText.instruction);
-                if kb.response>0
-                    curState = expState.Init_Exp_Wait; % move to new Block
-                end
+                curState = expState.Init_Exp_Wait; % move to new Block
                 
             case expState.Init_Exp_Wait
-                v.dispText('New Block Start');
                 if kb.response>0
-                    curState = expState.New_Block_Wait;
+                    v.dispText('New Block Start');
+                    curState = expState.Init_Block;
                 end
                 
-            case expState.New_Block_Wait
-                
-                if mod(expInfo.curTrial-1,full_blk_trials)==0
-                    switch exp.seq((i-1)*full_blk_trials+1,2)
-                        case 1
-                            infoText.instruction=['Block 1\n', ...
-                                'In this block, Please attend to Target Absent. ', ...
-                                'You do not need to respond.\n',...
-                                '\n when you are ready, please tell the experimenter'];
-                            v.dispText(infoText.instruction);
-                            stim.trigger=1111;
-                        case 2
-                            infoText.instruction=['Block 1\n', ...
-                                'In this block, Please attend to Color Target. ', ...
-                                'You do not need to respond.\n',...
-                                '\n when you are ready, please tell the experimenter'];
-                            v.dispText(infoText.instruction);
-                            stim.trigger=2222;
-                        case 3
-                            infoText.instruction=['Block 1\n', ...
-                                'In this block, Please attend to Orientation Target. ', ...
-                                'You do not need to respond.\n',...
-                                '\n when you are ready, please tell the experimenter'];
-                            v.dispText(infoText.instruction);
-                            stim.trigger=3333;
-                    end
-                    disp(stim.trigger);
-                end
-                if kb.response>0
-                    curState = expState.Block_Wait;
-                end
-         
-            case expState.Block_Wait;
-                if kb.response>0
-                    curState=expState.Init_Block;
-                end
+%             case expState.New_Block_Wait
+%                 if kb.response>0
+%                     if mod(expInfo.curTrial-1,full_blk_trials)==0
+%                         switch exp.seq((i-1)*full_blk_trials+1,2)
+%                             case 1
+%                                 infoText.instruction=['Block 1\n', ...
+%                                     'In this block, Please attend to Target Absent. ', ...
+%                                     'You do not need to respond.\n',...
+%                                     '\n when you are ready, please tell the experimenter'];
+%                                 v.dispText(infoText.instruction);
+%                                 stim.trigger=1111;
+%                             case 2
+%                                 infoText.instruction=['Block 1\n', ...
+%                                     'In this block, Please attend to Color Target. ', ...
+%                                     'You do not need to respond.\n',...
+%                                     '\n when you are ready, please tell the experimenter'];
+%                                 v.dispText(infoText.instruction);
+%                                 stim.trigger=2222;
+%                             case 3
+%                                 infoText.instruction=['Block 1\n', ...
+%                                     'In this block, Please attend to Orientation Target. ', ...
+%                                     'You do not need to respond.\n',...
+%                                     '\n when you are ready, please tell the experimenter'];
+%                                 v.dispText(infoText.instruction);
+%                                 stim.trigger=3333;
+%                         end
+%                         disp(stim.trigger);
+%                     else
+%                     end
+%                     curState = expState.Block_Wait;
+%                 end
+%          
+%             case expState.Block_Wait;
+%                 if kb.response>0
+%                     curState=expState.Init_Block;
+%                 end
                 
             case expState.Init_Block
                 if kb.response>0
