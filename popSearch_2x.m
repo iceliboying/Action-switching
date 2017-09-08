@@ -18,6 +18,7 @@ exp = CExp(num_block,blk_trials,'blockFactors',1,'blockRepetition',1); %
 %    full_blk_trials = num_block*blk_trials/3; % Number of trials in a "full" block
 exp.seq = genTrials(num_block/3,50,3); % color/ori/absent, pos
 full_blk_trials=num_block*blk_trials/3; % Number of trials in a "full" block
+blk=num_block/3; % three kinds of block labels, blk is number of the blocks with the same labels
     
 for i=1:num_block
     seq=debruijn_generator(8,2);
@@ -32,42 +33,15 @@ end
 % set labels for blocks, Sep 06, 2017, Bing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-l=0;
-m=0;
-n=0;
+A(1:blk,1)=1;
+A(blk+1:2*blk,1)=2;
+A(2*blk+1:3*blk,1)=3;
+B=randperm(length(A));
 
-for i=1:num_block
-    a=ceil(rand*3);
-    
-    if a==1
-        l=l+1;
-    else
-        if a==2
-            m=m+1;
-        else
-            n=n+1;
-        end
-    end
-        
-    if l>=6
-        a=1+ceil(rand*2);
-    end
-    if m>=6
-        pos=randi(2);
-        x=[1,3];
-        a=x(pos);
-    end
-    if n>=6
-        a=ceil(2*rand);
-    end
-    
-    for j=1:blk_trials
-        exp.seq(j,5)=a;
-    end
-end
-    
-            
-       
+for i=1:length(A)
+        exp.seq((i-1)*blk_trials+1:i*blk_trials,5)=A(B(i));
+end      
+      
 % exp.subInfo; % acquire subject information
 
 expInfo.NumTrials = size(exp.seq,1);
@@ -82,6 +56,7 @@ expInfo.StartTime = GetSecs;
 % declare hardware variables: display, keyboard, stimuli
 v = [];
 kb = [];
+kb1=[];
 stim = [];
 
 % curState stores the state of the experimental flow
@@ -101,6 +76,7 @@ setup(block);
         
         % define input device
         kb = SInput('m');
+        kb1 = SInput('k');
         
         %create vertical line
         % Luminance: 36
@@ -215,52 +191,40 @@ setup(block);
                 
             case expState.Init_Exp_Wait
                 if kb.response>0
-                    v.dispText('New Block Start');
+                    if mod(expInfo.curTrial-1,blk_trials)==0
+                        switch exp.seq(expInfo.curTrial,5)
+                            case 1
+                                infoText.instruction=['Block ' num2str(floor(expInfo.curTrial/blk_trials)+1) ,...
+                                    '\n In this block, Please attend to Target Absent.\n  ', ...
+                                    '\n You do not need to respond.\n',...
+                                    '\n when you are ready, please tell the experimenter'];
+                                v.dispText(infoText.instruction);
+                                stim.trigger=1111;
+                            case 2
+                                infoText.instruction=['Block ' num2str(floor(expInfo.curTrial/blk_trials)+1) ,...
+                                    '\n In this block, Please attend to Color Target.\n  ', ...
+                                    '\n You do not need to respond.\n',...
+                                    '\n when you are ready, please tell the experimenter'];
+                                v.dispText(infoText.instruction);
+                                stim.trigger=2222;
+                            case 3
+                                infoText.instruction=['Block ' num2str(floor(expInfo.curTrial/blk_trials)+1) ,...
+                                    '\n In this block, Please attend to Orientation Target.\n ', ...
+                                    '\n You do not need to respond.\n',...
+                                    '\n when you are ready, please tell the experimenter'];
+                                v.dispText(infoText.instruction);
+                                stim.trigger=3333;
+                        end
+disp(stim.trigger);
+                    end
                     curState = expState.Init_Block;
                 end
                 
-%             case expState.New_Block_Wait
-%                 if kb.response>0
-%                     if mod(expInfo.curTrial-1,full_blk_trials)==0
-%                         switch exp.seq((i-1)*full_blk_trials+1,2)
-%                             case 1
-%                                 infoText.instruction=['Block 1\n', ...
-%                                     'In this block, Please attend to Target Absent. ', ...
-%                                     'You do not need to respond.\n',...
-%                                     '\n when you are ready, please tell the experimenter'];
-%                                 v.dispText(infoText.instruction);
-%                                 stim.trigger=1111;
-%                             case 2
-%                                 infoText.instruction=['Block 1\n', ...
-%                                     'In this block, Please attend to Color Target. ', ...
-%                                     'You do not need to respond.\n',...
-%                                     '\n when you are ready, please tell the experimenter'];
-%                                 v.dispText(infoText.instruction);
-%                                 stim.trigger=2222;
-%                             case 3
-%                                 infoText.instruction=['Block 1\n', ...
-%                                     'In this block, Please attend to Orientation Target. ', ...
-%                                     'You do not need to respond.\n',...
-%                                     '\n when you are ready, please tell the experimenter'];
-%                                 v.dispText(infoText.instruction);
-%                                 stim.trigger=3333;
-%                         end
-%                         disp(stim.trigger);
-%                     else
-%                     end
-%                     curState = expState.Block_Wait;
-%                 end
-%          
-%             case expState.Block_Wait;
-%                 if kb.response>0
-%                     curState=expState.Init_Block;
-%                 end
-                
             case expState.Init_Block
-                if kb.response>0
+                if kb1.response>0
                     curState = expState.Init_Trial; % move to Trial presentation
                 end
-               
+                
             case expState.Init_Trial
                 % trial configration
                 

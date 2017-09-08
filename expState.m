@@ -14,7 +14,7 @@ classdef expState
         Init_Exp_Wait (inf)
         New_Block_Wait (inf)
         Block_Wait(inf)
-        Init_Block (inf)
+        Init_Block (10)
         Init_Trial (inf)
         Fixation (0.3) 
         Cue (0)

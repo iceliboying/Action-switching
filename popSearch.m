@@ -4,8 +4,8 @@ function popSearch(block)
 
 datapath= '.';
 
-blk_trials = 50;
-num_block = 30;
+blk_trials = 65;
+num_block = 18;
 %    block_percent = [75 25 50];
 
 rand('seed',sum(clock*100))
@@ -18,7 +18,7 @@ exp = CExp(num_block,blk_trials,'blockFactors',1,'blockRepetition',1); %
 %    full_blk_trials = num_block*blk_trials/3; % Number of trials in a "full" block
 
 for i=1:num_block
-    seq=debruijn_generator(7,2);
+    seq=debruijn_generator(8,2);
     seq(end+1)=seq(1);
     exp.seq((i-1)*blk_trials+1:i*blk_trials,1)=seq<5; % seq %in% 5...8 => target absent
     exp.seq((i-1)*blk_trials+1:i*blk_trials,2)=mod(ceil(seq/2),2)+1; % response/action mapping (1 = cue on right, 2 = cue on left)

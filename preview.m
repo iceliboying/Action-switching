@@ -4,8 +4,8 @@ function popSearch(block)
 
 datapath= '.';
 
-blk_trials = 50;
-num_block = 6;
+blk_trials = 65;
+num_block = 5;
 %    block_percent = [75 25 50];
 
 rand('seed',sum(clock*100))
